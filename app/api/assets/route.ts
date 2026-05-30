@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
           category,
           currentValue,
           purchasePrice: purchasePrice ?? null,
-          purchaseDate: purchaseDate ?? null,
+          purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
           currency: currency ?? 'USD',
           quantity: quantity ?? null,
           ticker: ticker?.trim().toUpperCase() ?? null,

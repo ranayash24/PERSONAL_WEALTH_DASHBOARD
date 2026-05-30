@@ -28,7 +28,7 @@ const mockDb = {
       })
     },
     findUnique: async () => null,
-    create: async () => ({ id: 'demo', ...MOCK_ASSETS[0] }),
+    create: async () => ({ ...MOCK_ASSETS[0], id: 'demo' }),
     update: async () => MOCK_ASSETS[0],
     delete: async () => MOCK_ASSETS[0],
     deleteMany: async () => ({ count: 0 }),

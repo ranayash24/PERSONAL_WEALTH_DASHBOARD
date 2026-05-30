@@ -63,12 +63,9 @@ export function AddAssetForm({ assetId, defaultValues }: AddAssetFormProps) {
     }
   }
 
-  const showTickerField = [
-    AssetCategory.STOCKS,
-    AssetCategory.BONDS,
-    AssetCategory.CRYPTO,
-    AssetCategory.COMMODITIES,
-  ].includes(watchedCategory as AssetCategory)
+  const showTickerField = (
+    [AssetCategory.STOCKS, AssetCategory.BONDS, AssetCategory.CRYPTO, AssetCategory.COMMODITIES] as string[]
+  ).includes(watchedCategory)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">

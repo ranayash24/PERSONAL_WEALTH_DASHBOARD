@@ -59,8 +59,7 @@ export const assetSchema = z.object({
   purchaseDate: z
     .string()
     .optional()
-    .nullable()
-    .transform((val) => (val ? new Date(val) : null)),
+    .nullable(),
   currency: z
     .string()
     .min(3, 'Currency code must be 3 characters')
