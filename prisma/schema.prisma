@@ -1,0 +1,129 @@
+// Prisma schema using MongoDB Atlas (cloud, no local install needed)
+// Free tier: https://www.mongodb.com/cloud/atlas/register
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum AssetCategory {
+  STOCKS
+  BONDS
+  REAL_ESTATE
+  CRYPTO
+  CASH
+  COMMODITIES
+  PRIVATE_EQUITY
+  ALTERNATIVE
+  RETIREMENT
+  OTHER
+}
+
+model User {
+  id            String         @id @default(cuid()) @map("_id")
+  name          String?
+  email         String         @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  accounts      Account[]
+  settings      UserSettings?
+  assets        Asset[]
+  imports       Import[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid()) @map("_id")
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model UserSettings {
+  id               String   @id @default(cuid()) @map("_id")
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id])
+  currency         String   @default("USD")
+  alertThreshold   Float    @default(10.0)
+  twoFactorEnabled Boolean  @default(false)
+  twoFactorSecret  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("user_settings")
+}
+
+model Asset {
+  id            String        @id @default(cuid()) @map("_id")
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  name          String
+  category      AssetCategory
+  currentValue  Float
+  purchasePrice Float?
+  purchaseDate  DateTime?
+  currency      String        @default("USD")
+  quantity      Float?
+  ticker        String?
+  location      String?
+  notes         String?
+  isEncrypted   Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  valuations    Valuation[]
+
+  @@index([userId])
+  @@index([category])
+  @@map("assets")
+}
+
+model Valuation {
+  id        String   @id @default(cuid()) @map("_id")
+  assetId   String
+  asset     Asset    @relation(fields: [assetId], references: [id])
+  value     Float
+  date      DateTime @default(now())
+  source    String?
+  createdAt DateTime @default(now())
+
+  @@index([assetId])
+  @@index([date])
+  @@map("valuations")
+}
+
+model Import {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  fileName  String
+  fileType  String
+  status    String   @default("PENDING")
+  rowCount  Int?
+  errors    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("imports")
+}
