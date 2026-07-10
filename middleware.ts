@@ -4,7 +4,8 @@ import type { NextRequest } from 'next/server'
 
 // Routes that don't require authentication
 const publicRoutes = ['/', '/login', '/register']
-const authApiRoutes = ['/api/auth']
+// /api/cron is protected by its own CRON_SECRET bearer token, not a session
+const authApiRoutes = ['/api/auth', '/api/cron']
 
 export default auth((req: NextRequest & { auth: unknown }) => {
   const { nextUrl, auth: session } = req as NextRequest & { auth: { user?: { id?: string } } | null }
